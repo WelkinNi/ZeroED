@@ -64,7 +64,7 @@ def extract_func(text_content):
                 clean_func_list.append(function)
             elif 'is_dirty' in function_name:
                 dirty_func_list.append(function)
-    return clean_func_list, dirty_func_listA图人才 
+    return clean_func_list, dirty_func_list
 
 
 def extract_err_info(text, attr):
@@ -102,6 +102,7 @@ def gen_dirty_funcs(attr, clean_info, errs_info):
         dirty_str = dirty_str + str(errs_info)
         dirty_str = dirty_str + "\n"
     func_gen_prompt = err_clean_func_prompt(attr, clean_info, dirty_str)
+    llm_gen_func = get_ans_from_llm(func_gen_prompt, api_use=API_USE)
     temp_clean_flist, dirty_flist = extract_func(llm_gen_func)
     return temp_clean_flist, dirty_flist, func_gen_prompt, llm_gen_func
 
@@ -984,7 +985,7 @@ if __name__ == "__main__":
                     for val in llm_label_vals_dict[attr]['right_val_values']:
                         if handle_func_exec(func, val, attr) == 1:
                             pass_num += 1
-                    if float(pass_num / val_num) >= FUNC_VAL_THRESHOLD:
+                    if float(pass_num / val_num) >= 0.5:
                         temp_func_list.append(func)
                 funcs_for_attr[attr]['clean'] = temp_func_list
             func_num = 0
